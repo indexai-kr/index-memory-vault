@@ -1,0 +1,12 @@
+services:
+  memory-vault:
+    build: .
+    ports:
+      - "8484:8484"
+    volumes:
+      - ./vault:/vault   # your memories live here, on your disk
+    environment:
+      IMV_VAULT: /vault
+      IMV_HTTP: "1"
+      # IMV_ALLOW_AGENT_REVIEW: "1"  # DO NOT enable unless you accept
+      #                                that an AI can approve its own memories

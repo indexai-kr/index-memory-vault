@@ -66,7 +66,7 @@ def main() -> None:
             print(f"{k}: {v}")
     elif args.cmd == "doctor":
         findings = run_probes(store)
-        total = len(store.list(limit=10**9))
+        total = len(store.list(limit=None))
         errors = [f for f in findings if f.severity == "error"]
         warns = [f for f in findings if f.severity == "warn"]
         print(f"OK: {total} memories checked")

@@ -47,6 +47,8 @@ imv pending                # what did my AIs try to remember?
 imv show a1b2c3d4e5f6
 imv approve a1b2c3d4e5f6 -n "correct"
 imv reject  f6e5d4c3b2a1 -n "hallucinated"
+imv doctor                 # vault health check: reports any memory whose
+                           # state changed without an audit record
 ```
 
 ## Connect a client

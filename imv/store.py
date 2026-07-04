@@ -73,7 +73,6 @@ def _now() -> str:
 
 
 def _slug(text: str, limit: int = 40) -> str:
-    s = re.sub(r"[^\w가-힣-]+", "-", text.strip().lower()).strip("-")
     # Python's Unicode-aware \w keeps Korean and other letter scripts.
     s = re.sub(r"[^\w]+", "-", text.strip().lower()).strip("-")
     return s[:limit] or "memory"
@@ -114,6 +113,11 @@ class VaultStore:
         self.db = sqlite3.connect(self.db_path)
         self.db.row_factory = sqlite3.Row
         self.db.executescript(SCHEMA)
+
+    def close(self) -> None:
+        """Release the SQLite handle. Required on Windows before deleting
+        the vault directory (open handles block deletion, WinError 32)."""
+        self.db.close()
 
     # ---------- write path ----------
 
@@ -223,8 +227,11 @@ class VaultStore:
                     seen.add(m.id)
         return results
 
-    def list(self, q_state: str | None = None, limit: int = 50) -> list[Memory]:
-        limit = _limit(limit)
+    def list(self, q_state: str | None = None,
+             limit: int | None = 50) -> list[Memory]:
+        """limit=None is for internal callers (probes, doctor) and means
+        no cap; the MCP tool surface always passes a bounded int."""
+        limit = -1 if limit is None else _limit(limit)
         if q_state and q_state not in Q_STATES:
             raise ValueError(f"invalid q_state: {q_state}")
         if q_state:

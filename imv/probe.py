@@ -54,7 +54,7 @@ class GapProbe(TransitionProbe):
     def check(self, store: VaultStore) -> list[Finding]:
         hist = _histories(store)
         out: list[Finding] = []
-        for mem in store.list(limit=10**9):
+        for mem in store.list(limit=None):
             edges = hist.get(mem.id)
             if not edges:
                 out.append(Finding(

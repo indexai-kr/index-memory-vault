@@ -15,7 +15,9 @@ from __future__ import annotations
 import argparse
 import getpass
 import os
+from pathlib import Path
 
+from . import __version__
 from .probe import run_probes
 from .store import VaultStore
 
@@ -32,6 +34,7 @@ def _print(mem_dicts: list[dict]) -> None:
 
 def main() -> None:
     p = argparse.ArgumentParser(prog="imv")
+    p.add_argument("--version", action="version", version=f"%(prog)s {__version__}")
     sub = p.add_subparsers(dest="cmd", required=True)
 
     sub.add_parser("pending")
@@ -50,7 +53,19 @@ def main() -> None:
     sl.add_argument("--state", default=None,
                     choices=["needs_review", "verified", "blocked"])
 
+    install = sub.add_parser("install-windows")
+    install.add_argument("--server", required=True)
+    install.add_argument("--vault", required=True)
+    install.add_argument("--report")
+
     args = p.parse_args()
+    if args.cmd == "install-windows":
+        from .installer.windows import configure_and_diagnose
+        configure_and_diagnose(
+            Path(args.server), Path(args.vault),
+            Path(args.report) if args.report else None,
+        )
+        return
     store = _store()
     actor = f"human:{getpass.getuser()}"
 

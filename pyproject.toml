@@ -1,14 +1,23 @@
 [project]
 name = "index-memory-vault"
-version = "0.1.0"
+version = "0.2.3"
 description = "Self-hosted AI memory server with user-owned storage and human approval gates (MCP)"
 requires-python = ">=3.10"
 license = { text = "AGPL-3.0-only" }
 dependencies = ["mcp>=1.2"]
 
+[project.optional-dependencies]
+portal = [
+  "fastapi>=0.115",
+  "uvicorn>=0.30",
+  "argon2-cffi>=23.1",
+]
+test = ["pytest>=8", "httpx>=0.27"]
+
 [project.scripts]
 imv = "imv.cli:main"
 imv-server = "imv.server:main"
+imv-portal = "imv.portal.app:main"
 
 [build-system]
 requires = ["setuptools>=68"]
@@ -16,3 +25,6 @@ build-backend = "setuptools.build_meta"
 
 [tool.setuptools.packages.find]
 include = ["imv*"]
+
+[tool.setuptools.package-data]
+"imv.portal" = ["static/*"]

@@ -53,11 +53,12 @@ def search_memory(query: str, limit: int = 10,
     """Full-text search. By default only human-verified memories are
     returned. Set include_unverified=true to also see needs_review items,
     which are labeled and must be treated as unconfirmed."""
-    hits = store.search(query, limit=limit,
-                        include_unverified=include_unverified)
+    hits, retrieval_path = store.search_with_path(
+        query, limit=limit, include_unverified=include_unverified)
     return {"results": [m.public() for m in hits],
             "surface": "verified+needs_review" if include_unverified
-                       else "verified-only"}
+                       else "verified-only",
+            "retrieval_path": retrieval_path}
 
 
 @mcp.tool()

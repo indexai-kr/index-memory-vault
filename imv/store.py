@@ -183,49 +183,102 @@ class VaultStore:
                               (memory_id,)).fetchone()
         return Memory(**dict(row)) if row else None
 
+    # Korean particles / common stopwords that carry no discriminative value
+    # once a multi-word exact FTS query has already failed.
+    _STOPWORDS = {
+        "은", "는", "이", "가", "을", "를", "의", "에", "에서", "와", "과",
+        "도", "로", "으로", "및", "그리고", "무엇", "어디", "누구", "언제",
+        "어떻게", "알려줘", "알려", "the", "a", "an", "of", "is", "are",
+        "what", "who", "where", "when", "how",
+    }
+
     def search(self, query: str, limit: int = 10,
                include_unverified: bool = False) -> list[Memory]:
-        """FTS search with a substring fallback.
+        """Backward-compatible surface: returns only the result list.
 
-        Default surface = verified only; unverified results are opt-in and
-        always labeled by q_state. blocked never returns.
+        Prefer :meth:`search_with_path` when the retrieval path is needed.
+        """
+        return self.search_with_path(query, limit=limit,
+                                     include_unverified=include_unverified)[0]
 
-        FTS5's unicode61 tokenizer splits on whitespace, so agglutinative
-        text (e.g. Korean compounds) saved as one token is invisible to a
-        partial MATCH. When FTS returns nothing, or the query is short,
-        we supplement with a plain LIKE substring scan. This is a fallback,
-        not a language solution.
+    def search_with_path(self, query: str, limit: int = 10,
+                         include_unverified: bool = False
+                         ) -> tuple[list[Memory], str]:
+        """FTS search with a staged fallback chain (v0.2.3).
+
+        Default surface = verified only; unverified is opt-in and labeled by
+        q_state; blocked never returns.
+
+        SQLite FTS5's unicode61 tokenizer keeps Korean particle-attached
+        compounds as single tokens ('노바랩스가' != '노바랩스'), so a
+        multi-word AND query misses. Stages (first non-empty wins), returning
+        (results, retrieval_path):
+          1. fts         - quoted AND FTS over all tokens
+          2. fts_reduced - prefix OR FTS over core tokens (particles dropped)
+          3. like        - per-token OR substring (LIKE) scan
+          4. none        - empty (never invents content — no hallucination)
         """
         limit = _limit(limit)
         query = query.strip()
         if not query:
-            return []
+            return [], "none"
         states = ("verified", "needs_review") if include_unverified else ("verified",)
         marks = ",".join("?" for _ in states)
+        tokens = query.split()
 
-        # Quote tokens so user input can't break FTS5 query syntax.
-        fts_query = " ".join('"{}"'.format(t.replace('"', '""'))
-                             for t in query.split()) or '""'
-        rows = self.db.execute(
-            f"SELECT m.* FROM memories_fts f JOIN memories m ON m.rowid=f.rowid "
-            f"WHERE memories_fts MATCH ? AND m.q_state IN ({marks}) "
-            f"ORDER BY rank LIMIT ?", (fts_query, *states, limit)).fetchall()
-        results = [Memory(**dict(r)) for r in rows]
+        def _rows(sql, params):
+            return [Memory(**dict(r))
+                    for r in self.db.execute(sql, params).fetchall()]
 
-        if len(results) == 0 or len(query.strip()) <= 4:
-            seen = {m.id for m in results}
-            like = f"%{query.strip()}%"
-            extra = self.db.execute(
+        # 1) FTS: quoted AND over all tokens (original behaviour)
+        fts_and = " ".join('"{}"'.format(t.replace('"', '""'))
+                           for t in tokens) or '""'
+        try:
+            results = _rows(
+                f"SELECT m.* FROM memories_fts f JOIN memories m ON m.rowid=f.rowid "
+                f"WHERE memories_fts MATCH ? AND m.q_state IN ({marks}) "
+                f"ORDER BY rank LIMIT ?", (fts_and, *states, limit))
+        except sqlite3.OperationalError:
+            results = []
+        if results:
+            return results, "fts"
+
+        # core tokens = drop 1-char tokens and particles/stopwords, longest first
+        core = [t for t in tokens
+                if len(t) >= 2 and t.lower() not in self._STOPWORDS] or tokens
+        core = sorted(core, key=len, reverse=True)[:4]
+
+        # 2) reduced FTS: prefix OR over core tokens
+        safe = [re.sub(r'["*()]', "", t) for t in core]
+        safe = [t for t in safe if t]
+        if safe:
+            fts_or = " OR ".join(f"{t}*" for t in safe)
+            try:
+                results = _rows(
+                    f"SELECT m.* FROM memories_fts f JOIN memories m ON m.rowid=f.rowid "
+                    f"WHERE memories_fts MATCH ? AND m.q_state IN ({marks}) "
+                    f"ORDER BY rank LIMIT ?", (fts_or, *states, limit))
+            except sqlite3.OperationalError:
+                results = []
+            if results:
+                return results, "fts_reduced"
+
+        # 3) per-token OR LIKE substring (recovers particle-attached compounds)
+        clauses, params = [], list(states)
+        for t in (core or tokens):
+            like = f"%{t}%"
+            clauses.append("(title LIKE ? OR content LIKE ? OR tags LIKE ?)")
+            params += [like, like, like]
+        if clauses:
+            params.append(limit)
+            results = _rows(
                 f"SELECT * FROM memories WHERE q_state IN ({marks}) "
-                f"AND (title LIKE ? OR content LIKE ? OR tags LIKE ?) "
-                f"ORDER BY created_at DESC LIMIT ?",
-                (*states, like, like, like, limit)).fetchall()
-            for r in extra:
-                m = Memory(**dict(r))
-                if m.id not in seen and len(results) < limit:
-                    results.append(m)
-                    seen.add(m.id)
-        return results
+                f"AND (" + " OR ".join(clauses) + ") "
+                f"ORDER BY created_at DESC LIMIT ?", params)
+            if results:
+                return results[:limit], "like"
+
+        return [], "none"
 
     def list(self, q_state: str | None = None,
              limit: int | None = 50) -> list[Memory]:

@@ -40,6 +40,32 @@ pip install .
 imv-server
 ```
 
+## Official Windows build and member portal
+
+The AGPL source remains public and requires no account. The member portal is
+for verified official Windows installers, automatic Claude Desktop setup, and
+support; membership does not grant access to otherwise closed source.
+
+The portal stores account, terms-consent, and download-ledger records only.
+Memory content and vault files are never uploaded to INDEX servers.
+
+Run the optional portal locally:
+
+```bash
+pip install ".[portal]"
+imv-portal                         # http://127.0.0.1:8486/member/register
+```
+
+Build the Windows executables and Inno Setup wrapper on Windows:
+
+```powershell
+.\scripts\build_windows.ps1
+```
+
+Outputs: `imv-server.exe`, `imv.exe`, and `imv-setup-0.2.1.exe`. The installer
+backs up and JSON-merges only `mcpServers.memory-vault`; malformed Claude
+configuration is backed up before a clean config is created.
+
 Review loop (human, in a terminal):
 
 ```bash
@@ -93,8 +119,8 @@ back it up, open it in Obsidian.
 
 ## Roadmap
 
-- v0.1 — self-hosted memory server (this)
-- v0.2 — review dashboard (web)
+- v0.1 — self-hosted memory server
+- v0.2 — member portal, official release library, and Windows installer (current)
 - v0.3 — Claude Code / Codex / Ollama recipes
 - v0.4 — audit ledger export
 - v0.5 — team mode

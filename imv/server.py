@@ -20,14 +20,40 @@ from __future__ import annotations
 import os
 
 from mcp.server.fastmcp import FastMCP
+from mcp.server.fastmcp.server import Settings as FastMCPSettings
 
+from .knowledge import GATE_DESCRIPTION, KnowledgeStore, KnowledgeUnavailable
 from .store import VaultStore
 
 VAULT_DIR = os.environ.get("IMV_VAULT", "./vault")
 ALLOW_AGENT_REVIEW = os.environ.get("IMV_ALLOW_AGENT_REVIEW", "0") == "1"
+KNOWLEDGE_DB = os.environ.get("IMV_KNOWLEDGE_DB", "")
+
+# FastMCP's settings are pydantic-settings, which by default reads a `.env`
+# from the *current working directory*. The cwd belongs to whichever host
+# launches us, so that file is not ours: a stray .env crashes startup if it is
+# not UTF-8, and one containing FASTMCP_* keys would silently rewrite our
+# server settings. Every option this server has comes from os.environ, so the
+# cwd .env is opted out of entirely.
+FastMCPSettings.model_config["env_file"] = None
 
 mcp = FastMCP("index-memory-vault")
 store = VaultStore(VAULT_DIR)
+
+_knowledge: KnowledgeStore | None = None
+
+
+def knowledge() -> KnowledgeStore:
+    """Open the knowledge base on first use. Absence raises rather than
+    returning empty, so "not configured" never reads as "no evidence"."""
+    global _knowledge
+    if _knowledge is None:
+        if not KNOWLEDGE_DB:
+            raise KnowledgeUnavailable(
+                "IMV_KNOWLEDGE_DB is not set. The knowledge base is a "
+                "separate read-only store from the memory vault.")
+        _knowledge = KnowledgeStore(KNOWLEDGE_DB)
+    return _knowledge
 
 REVIEW_LOCKED_MSG = (
     "Review is a human-only action on this server. "
@@ -93,6 +119,67 @@ def reject_memory(memory_id: str, note: str | None = None) -> dict:
         return {"error": REVIEW_LOCKED_MSG.format(id=memory_id)}
     mem = store.set_state(memory_id, "blocked", actor="agent", note=note)
     return {"result": mem.public()}
+
+
+@mcp.tool()
+def search_chunks(query: str, limit: int = 10) -> dict:
+    """Search the knowledge base for evidence chunks.
+
+    Serves only chunks a human approved AND placed in a retrievable search
+    tier. The gate is enforced by this server and cannot be turned off from
+    the client. Every hit carries chunk / document / version / source ids so
+    a citation can be traced back to its origin. `withheld_by_policy` counts
+    chunks whose text matched but that the gate excluded, so "no evidence"
+    is never confused with "blocked by policy"."""
+    try:
+        hits, retrieval_path, withheld = knowledge().search(query, limit=limit)
+    except KnowledgeUnavailable as exc:
+        return {"error": str(exc), "knowledge_connected": False}
+    return {"results": [h.public(snippet_for=query) for h in hits],
+            "retrieval_path": retrieval_path,
+            "withheld_by_policy": withheld,
+            "gate": GATE_DESCRIPTION}
+
+
+@mcp.tool()
+def get_chunk(chunk_id: int) -> dict:
+    """Fetch one knowledge chunk in full.
+
+    Subject to the same policy gate as search_chunks: knowing an id does not
+    grant access to an unapproved chunk. A withheld chunk and a nonexistent
+    one are reported identically, on purpose."""
+    try:
+        chunk = knowledge().get(chunk_id)
+    except KnowledgeUnavailable as exc:
+        return {"error": str(exc), "knowledge_connected": False}
+    except ValueError as exc:
+        return {"error": str(exc)}
+    if chunk is None:
+        return {"result": None,
+                "note": "No approved chunk with that id is retrievable. It "
+                        "either does not exist or the policy gate withholds it."}
+    return {"result": chunk.public(max_chars=100_000)}
+
+
+@mcp.tool()
+def imv_status() -> dict:
+    """Report which stores this server is actually connected to, and how
+    much of each is retrievable. All counts are measured, not configured."""
+    by_state = {state: len(store.list(state, limit=500))
+                for state in ("verified", "needs_review", "blocked")}
+    status = {
+        "memory_vault": {
+            "vault_dir": str(store.vault),
+            "db_path": str(store.db_path),
+            "memories_by_q_state": by_state,
+            "agent_review_allowed": ALLOW_AGENT_REVIEW,
+        }
+    }
+    try:
+        status["knowledge_base"] = {"connected": True, **knowledge().policy_snapshot()}
+    except KnowledgeUnavailable as exc:
+        status["knowledge_base"] = {"connected": False, "reason": str(exc)}
+    return status
 
 
 def main() -> None:

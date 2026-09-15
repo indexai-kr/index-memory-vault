@@ -3,6 +3,7 @@ import os
 import sys
 import tempfile
 import unittest
+from pathlib import Path
 
 from mcp import ClientSession, StdioServerParameters
 from mcp.client.stdio import stdio_client
@@ -25,6 +26,7 @@ class MCPIntegrationTests(unittest.IsolatedAsyncioTestCase):
         with tempfile.TemporaryDirectory() as vault:
             env = os.environ.copy()
             env["IMV_VAULT"] = vault
+            env.pop("IMV_KNOWLEDGE_DB", None)
             params = StdioServerParameters(
                 command=sys.executable,
                 args=["-m", "imv.server"],
@@ -45,6 +47,9 @@ class MCPIntegrationTests(unittest.IsolatedAsyncioTestCase):
                             "get_memory",
                             "approve_memory",
                             "reject_memory",
+                            "search_chunks",
+                            "get_chunk",
+                            "imv_status",
                         },
                     )
 
@@ -75,6 +80,55 @@ class MCPIntegrationTests(unittest.IsolatedAsyncioTestCase):
                         "reject_memory", {"memory_id": memory_id}
                     ))
                     self.assertIn("human-only", locked["error"])
+
+                    # An unconfigured knowledge base must announce itself as
+                    # disconnected, never as "no evidence found".
+                    unconfigured = _tool_data(await session.call_tool(
+                        "search_chunks", {"query": "SQLite"}
+                    ))
+                    self.assertFalse(unconfigured["knowledge_connected"])
+                    self.assertNotIn("results", unconfigured)
+                    self.assertIn("IMV_KNOWLEDGE_DB", unconfigured["error"])
+
+                    by_id = _tool_data(await session.call_tool(
+                        "get_chunk", {"chunk_id": 1}
+                    ))
+                    self.assertFalse(by_id["knowledge_connected"])
+
+                    status = _tool_data(await session.call_tool("imv_status", {}))
+                    self.assertEqual(
+                        status["memory_vault"]["memories_by_q_state"]["verified"], 1)
+                    self.assertFalse(status["memory_vault"]["agent_review_allowed"])
+                    self.assertFalse(status["knowledge_base"]["connected"])
+
+
+class HostileWorkingDirectoryTests(unittest.IsolatedAsyncioTestCase):
+    async def test_server_starts_when_cwd_holds_a_foreign_env_file(self):
+        """The cwd belongs to the host that launches us. A .env sitting there
+        is not ours: it must not crash startup (non-UTF-8) and must not be
+        able to rewrite our settings (FASTMCP_* keys)."""
+        with tempfile.TemporaryDirectory() as cwd:
+            # UTF-16 with a BOM, exactly like the stray file that broke this.
+            (Path(cwd) / ".env").write_bytes(
+                "GEMINI_API_KEY=xyz\nFASTMCP_PORT=1\n".encode("utf-16"))
+            vault = Path(cwd) / "vault"
+            env = os.environ.copy()
+            env["IMV_VAULT"] = str(vault)
+            env.pop("IMV_KNOWLEDGE_DB", None)
+            # cwd is the hostile directory, so imv has to be found some other way.
+            env["PYTHONPATH"] = os.path.dirname(os.path.dirname(__file__))
+
+            params = StdioServerParameters(
+                command=sys.executable,
+                args=["-m", "imv.server"],
+                env=env,
+                cwd=cwd,
+            )
+            async with stdio_client(params) as (read, write):
+                async with ClientSession(read, write) as session:
+                    await session.initialize()
+                    tools = {t.name for t in (await session.list_tools()).tools}
+                    self.assertIn("imv_status", tools)
 
 
 if __name__ == "__main__":

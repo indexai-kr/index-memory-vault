@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.3.0
+
+Experimental, all in this repo: knowledge-base search (`search_chunks`,
+`get_chunk`, `imv_status` — served only if approval_state=approved and
+search_tier in (primary, reference)); two-axis schema (search_tier ×
+approval_state) enforced server-side in knowledge.py; dreaming cycle
+(light / deep / rem), read-only, proposals only; waking
+(`imv waking apply`), human CLI, dry-run by default, never an MCP tool;
+pre-approval criteria v0.1 (Strong/Medium/Weak/None) scored in dreaming,
+docs in docs/design/. Ref-Learning and Q-Cache are design-only: no code,
+docs pending.
+
 ## 0.2.3
 
 Add: `search_memory` FTS 한국어 다중어 질의 폴백 추가 — G3 파일럿 발견 결함 대응.

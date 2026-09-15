@@ -31,6 +31,22 @@ Approval is deliberately **not** an MCP tool a model can call. It is a
 human-side CLI action (`imv approve <id>`). A model approving its own memory
 would defeat the entire point.
 
+## Status — what actually works
+
+| Feature | Status | Notes |
+|---|---|---|
+| MCP memory server, q_state (needs_review / verified / blocked) | Stable | since v0.2.x |
+| Human-only approval via CLI (`imv approve`) | Stable | never exposed as an MCP tool |
+| Knowledge-base search (`search_chunks`, `get_chunk`, `imv_status`) | Experimental | v0.3.0; served only if approval_state=approved and search_tier in (primary, reference) |
+| Two-axis schema (search_tier × approval_state) | Experimental | enforced server-side in knowledge.py |
+| Dreaming cycle (light / deep / rem) | Experimental | read-only; produces proposals only |
+| Waking (`imv waking apply`) | Experimental | human CLI, dry-run by default, never an MCP tool |
+| Pre-approval criteria v0.1 (Strong/Medium/Weak/None) | Experimental | scoring lives in dreaming; docs/design/ |
+| Ref-Learning | Design-only | no code; docs pending |
+| Q-Cache | Design-only | no code in this repo; docs pending |
+
+Everything above is open for argument. If a design is wrong, open an issue — that is why it is published unfinished.
+
 ## Quick start
 
 ```bash
@@ -129,3 +145,8 @@ back it up, open it in Obsidian.
 
 AGPL-3.0. Commercial licenses for closed deployments are available —
 contact contact@indexai.kr.
+
+Running this server for others over a network counts as conveying it:
+if you modify the code and let people use it remotely, share your
+modified source under the same license. See the LICENSE file for the
+full terms.

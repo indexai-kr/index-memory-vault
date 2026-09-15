@@ -1,0 +1,40 @@
+{"id": "m01", "title": "청소로봇 베타 코드네임", "body": "나비로보틱스 청소로봇 베타의 코드네임은 헤일로이다. 헤일로는 2026년 봄 파일럿에 투입된다.", "answer_key": "헤일로", "q_state": "verified"}
+{"id": "m02", "title": "헤일로 주행 시간", "body": "청소로봇 헤일로는 1회 충전으로 190분 주행한다. 주행 시간 190분은 베타 사양서에 명시돼 있다.", "answer_key": "190분", "q_state": "verified"}
+{"id": "m03", "title": "정기 회의 시간", "body": "나비로보틱스 전사 정기 회의는 매주 수요일 오전 10시에 열린다. 수요일 오전 10시 회의는 대표 주재이다.", "answer_key": "수요일 오전 10시", "q_state": "verified"}
+{"id": "m04", "title": "물류로봇 적재 하중", "body": "나비로보틱스 물류로봇의 최대 적재 하중은 120kg이다. 120kg 초과 적재는 보증 대상에서 제외된다.", "answer_key": "120kg", "q_state": "verified"}
+{"id": "m05", "title": "신사옥 이전일", "body": "나비로보틱스 신사옥 이전일은 2026-11-02이다. 2026-11-02 이전에는 구 사옥을 사용한다.", "answer_key": "2026-11-02", "q_state": "verified"}
+{"id": "m06", "title": "사내 카페 이름", "body": "나비로보틱스 사내 카페의 이름은 돛단배이다. 돛단배는 1층 로비 옆에 있다.", "answer_key": "돛단배", "q_state": "verified"}
+{"id": "m07", "title": "출입카드 발급처", "body": "나비로보틱스 출입카드 발급은 2층 총무팀에서 한다. 총무팀 방문 시 사번을 지참한다.", "answer_key": "총무팀", "q_state": "verified"}
+{"id": "m08", "title": "촬영 드론 모델명", "body": "나비로보틱스 촬영용 드론 모델명은 솔개-2이다. 솔개-2는 야간 촬영을 지원한다.", "answer_key": "솔개-2", "q_state": "verified"}
+{"id": "m09", "title": "서버 배포 요일", "body": "나비로보틱스 서버 정기 배포는 목요일 오후 4시에 한다. 목요일 오후 4시 배포는 자동화돼 있다.", "answer_key": "목요일 오후 4시", "q_state": "verified"}
+{"id": "m10", "title": "파일럿 고객사", "body": "청소로봇 첫 파일럿 고객사는 해랑유치원이다. 해랑유치원 파일럿은 6주간 진행된다.", "answer_key": "해랑유치원", "q_state": "verified"}
+{"id": "m11", "title": "API 호출 한도", "body": "나비로보틱스 공개 API 호출 한도는 분당 300건이다. 분당 300건 초과 시 429 오류가 난다.", "answer_key": "분당 300건", "q_state": "verified"}
+{"id": "m12", "title": "장애 전파 규칙", "body": "장애 발생 시 15분 안에 전사 메신저에 전파해야 한다. 15분 전파 규칙은 장애 대응 지침 1조이다.", "answer_key": "15분", "q_state": "verified"}
+{"id": "m13", "title": "제2 물류센터 위치", "body": "나비로보틱스 제2 물류센터는 청라 7블록에 있다. 청라 7블록 센터는 2026년 가동 예정이다.", "answer_key": "7블록", "q_state": "verified"}
+{"id": "m14", "title": "창립기념일", "body": "나비로보틱스 창립기념일은 4월 17일이다. 4월 17일은 전사 휴무일이다.", "answer_key": "4월 17일", "q_state": "verified"}
+{"id": "m15", "title": "점심시간", "body": "나비로보틱스 점심시간은 12시 30분부터 1시간이다. 1시간 점심시간에는 구내식당이 운영된다.", "answer_key": "1시간", "q_state": "verified"}
+{"id": "m16", "title": "코드리뷰 승인 인원", "body": "나비로보틱스 코드리뷰는 2명의 승인이 있어야 병합된다. 2명 승인 규칙은 저장소마다 동일하다.", "answer_key": "2명", "q_state": "verified"}
+{"id": "m17", "title": "테스트 커버리지 기준", "body": "나비로보틱스 테스트 커버리지 기준은 75%이다. 75% 미만이면 배포가 차단된다.", "answer_key": "75%", "q_state": "verified"}
+{"id": "m18", "title": "사내 메신저 이름", "body": "나비로보틱스 사내 메신저 이름은 나비톡이다. 나비톡 장애 시 이메일로 전환한다.", "answer_key": "나비톡", "q_state": "verified"}
+{"id": "m19", "title": "신입 교육 기간", "body": "나비로보틱스 신입사원 교육 기간은 3일이다. 3일 교육 후 팀에 배치된다.", "answer_key": "3일", "q_state": "verified"}
+{"id": "m20", "title": "연말 행사 장소", "body": "나비로보틱스 연말 행사는 별빛홀에서 열린다. 별빛홀 행사는 저녁 6시 시작이다.", "answer_key": "별빛홀", "q_state": "verified"}
+{"id": "m21", "title": "서버 점검 시간", "body": "나비로보틱스 서버 정기 점검은 매월 첫째 주 일요일 새벽 2시에 한다. 새벽 2시 점검 중에는 서비스가 중단된다.", "answer_key": "새벽 2시", "q_state": "verified"}
+{"id": "m22", "title": "로봇 렌탈 요금", "body": "나비로보틱스 청소로봇 렌탈 요금은 월 49만원이다. 월 49만원 요금제에는 소모품이 포함된다.", "answer_key": "49만원", "q_state": "verified"}
+{"id": "m23", "title": "A/S 접수 채널", "body": "나비로보틱스 A/S 접수는 홈페이지 챗봇에서 한다. 챗봇 접수가 전화보다 빠르다.", "answer_key": "챗봇", "q_state": "verified"}
+{"id": "m24", "title": "도서관 대출 기간", "body": "나비로보틱스 사내 도서관 대출 기간은 14일이다. 14일 연장은 1회만 가능하다.", "answer_key": "14일", "q_state": "verified"}
+{"id": "m25", "title": "보안 교육 기한", "body": "나비로보틱스 보안 교육은 입사 30일 안에 이수해야 한다. 30일 미이수 시 계정이 잠긴다.", "answer_key": "30일", "q_state": "verified"}
+{"id": "m26", "title": "회의실 예약 단위", "body": "나비로보틱스 회의실 예약 단위는 30분이다. 30분 단위로만 예약할 수 있다.", "answer_key": "30분", "q_state": "verified"}
+{"id": "m27", "title": "점심 식대 지원금", "body": "나비로보틱스 점심 식대 지원금은 9000원이다. 9000원은 급여에 합산 지급된다.", "answer_key": "9000원", "q_state": "verified"}
+{"id": "m28", "title": "재택근무 요일", "body": "나비로보틱스 재택근무 요일은 화요일이다. 화요일 재택은 팀장 승인 없이 가능하다.", "answer_key": "화요일", "q_state": "verified"}
+{"id": "m29", "title": "문서 보관 연한", "body": "나비로보틱스 회의록 보관 연한은 3년이다. 3년이 지난 회의록은 파기한다.", "answer_key": "3년", "q_state": "verified"}
+{"id": "m30", "title": "게스트 와이파이 SSID", "body": "나비로보틱스 게스트 와이파이 SSID는 Nabi-Guest이다. Nabi-Guest는 로비에서만 잡힌다.", "answer_key": "Nabi-Guest", "q_state": "verified"}
+{"id": "m31", "title": "차기 제품 코드네임안", "body": "차기 제품 코드네임안으로 번개곰이 검토 중이다. 번개곰은 아직 확정되지 않았다.", "answer_key": "번개곰", "q_state": "needs_review"}
+{"id": "m32", "title": "미확정 렌탈 단가", "body": "신규 렌탈 단가로 월 39만원이 논의 중이다. 월 39만원은 미확정 금액이다.", "answer_key": "39만원", "q_state": "needs_review"}
+{"id": "m33", "title": "검토 중 제휴사", "body": "제휴사로 달빛문구가 검토 중이다. 달빛문구 제휴는 아직 결정되지 않았다.", "answer_key": "달빛문구", "q_state": "needs_review"}
+{"id": "m34", "title": "시범 매장 수안", "body": "시범 운영 매장 수로 5곳이 제안됐다. 5곳 시범안은 승인 대기 중이다.", "answer_key": "5곳", "q_state": "needs_review"}
+{"id": "m35", "title": "예정 행사 날짜안", "body": "하반기 예정 행사 날짜안으로 2026-12-19가 올랐다. 2026-12-19는 잠정일이다.", "answer_key": "2026-12-19", "q_state": "needs_review"}
+{"id": "m36", "title": "내부 검토 문서", "body": "내부 검토 문서 번호는 NR-2026-0847이다. NR-2026-0847 문서는 검토 중이다.", "answer_key": "NR-2026-0847", "q_state": "needs_review"}
+{"id": "m37", "title": "기각 안건", "body": "사내코인 발행 안건은 기각됐다. 기각된 사내코인 안건은 재상정할 수 없다.", "answer_key": "사내코인", "q_state": "blocked"}
+{"id": "m38", "title": "오기 정정", "body": "목표 999대는 오기이며 정정됐다. 999대라는 수치는 문서에서 삭제됐다.", "answer_key": "999대", "q_state": "blocked"}
+{"id": "m39", "title": "폐기 디자인", "body": "검은돛 디자인은 폐기됐다. 폐기된 검은돛 시안은 사용하지 않는다.", "answer_key": "검은돛", "q_state": "blocked"}
+{"id": "m40", "title": "중단 제휴", "body": "구름식당과의 제휴는 중단됐다. 중단된 구름식당 제휴는 언급하지 않는다.", "answer_key": "구름식당", "q_state": "blocked"}

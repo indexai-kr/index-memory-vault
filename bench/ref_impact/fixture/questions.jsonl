@@ -1,0 +1,40 @@
+{"qid": "q01", "memory_id": "m01", "question": "청소로봇 베타의 코드네임은 무엇인가?", "expected_tokens": ["헤일로"], "match": "any"}
+{"qid": "q02", "memory_id": "m02", "question": "청소로봇 헤일로는 1회 충전으로 몇 분 주행하는가?", "expected_tokens": ["190분"], "match": "any"}
+{"qid": "q03", "memory_id": "m03", "question": "전사 정기 회의는 매주 언제 열리는가?", "expected_tokens": ["수요일", "오전 10시"], "match": "all"}
+{"qid": "q04", "memory_id": "m04", "question": "물류로봇의 최대 적재 하중은 얼마인가?", "expected_tokens": ["120kg"], "match": "any"}
+{"qid": "q05", "memory_id": "m05", "question": "신사옥 이전일은 언제인가?", "expected_tokens": ["2026-11-02"], "match": "any"}
+{"qid": "q06", "memory_id": "m06", "question": "사내 카페의 이름은 무엇인가?", "expected_tokens": ["돛단배"], "match": "any"}
+{"qid": "q07", "memory_id": "m07", "question": "출입카드 발급은 어디에서 하는가?", "expected_tokens": ["총무팀"], "match": "any"}
+{"qid": "q08", "memory_id": "m08", "question": "촬영용 드론의 모델명은 무엇인가?", "expected_tokens": ["솔개-2"], "match": "any"}
+{"qid": "q09", "memory_id": "m09", "question": "서버 정기 배포는 언제 하는가?", "expected_tokens": ["목요일", "오후 4시"], "match": "all"}
+{"qid": "q10", "memory_id": "m10", "question": "청소로봇 첫 파일럿 고객사는 어디인가?", "expected_tokens": ["해랑유치원"], "match": "any"}
+{"qid": "q11", "memory_id": "m11", "question": "공개 API 호출 한도는 어떻게 되는가?", "expected_tokens": ["분당 300건"], "match": "any"}
+{"qid": "q12", "memory_id": "m12", "question": "장애 발생 시 몇 분 안에 전파해야 하는가?", "expected_tokens": ["15분"], "match": "any"}
+{"qid": "q13", "memory_id": "m13", "question": "제2 물류센터는 어디에 있는가?", "expected_tokens": ["7블록"], "match": "any"}
+{"qid": "q14", "memory_id": "m14", "question": "창립기념일은 언제인가?", "expected_tokens": ["4월 17일"], "match": "any"}
+{"qid": "q15", "memory_id": "m15", "question": "점심시간은 12시 30분부터 얼마나 이어지는가?", "expected_tokens": ["1시간"], "match": "any"}
+{"qid": "q16", "memory_id": "m16", "question": "코드리뷰는 몇 명의 승인이 있어야 병합되는가?", "expected_tokens": ["2명"], "match": "any"}
+{"qid": "q17", "memory_id": "m17", "question": "테스트 커버리지 기준은 몇 %인가?", "expected_tokens": ["75%"], "match": "any"}
+{"qid": "q18", "memory_id": "m18", "question": "사내 메신저의 이름은 무엇인가?", "expected_tokens": ["나비톡"], "match": "any"}
+{"qid": "q19", "memory_id": "m19", "question": "신입사원 교육 기간은 며칠인가?", "expected_tokens": ["3일"], "match": "any"}
+{"qid": "q20", "memory_id": "m20", "question": "연말 행사는 어디에서 열리는가?", "expected_tokens": ["별빛홀"], "match": "any"}
+{"qid": "q21", "memory_id": "m21", "question": "서버 정기 점검은 언제 하는가?", "expected_tokens": ["새벽 2시"], "match": "any"}
+{"qid": "q22", "memory_id": "m22", "question": "청소로봇 렌탈 요금은 월 얼마인가?", "expected_tokens": ["49만원"], "match": "any"}
+{"qid": "q23", "memory_id": "m23", "question": "A/S 접수는 어디에서 하는가?", "expected_tokens": ["챗봇"], "match": "any"}
+{"qid": "q24", "memory_id": "m24", "question": "사내 도서관 대출 기간은 며칠인가?", "expected_tokens": ["14일"], "match": "any"}
+{"qid": "q25", "memory_id": "m25", "question": "보안 교육은 입사 후 며칠 안에 이수해야 하는가?", "expected_tokens": ["30일"], "match": "any"}
+{"qid": "q26", "memory_id": "m26", "question": "회의실 예약 단위는 어떻게 되는가?", "expected_tokens": ["30분"], "match": "any"}
+{"qid": "q27", "memory_id": "m27", "question": "점심 식대 지원금은 얼마인가?", "expected_tokens": ["9000원"], "match": "any"}
+{"qid": "q28", "memory_id": "m28", "question": "재택근무 요일은 언제인가?", "expected_tokens": ["화요일"], "match": "any"}
+{"qid": "q29", "memory_id": "m29", "question": "회의록 보관 연한은 몇 년인가?", "expected_tokens": ["3년"], "match": "any"}
+{"qid": "q30", "memory_id": "m30", "question": "게스트 와이파이 SSID는 무엇인가?", "expected_tokens": ["Nabi-Guest"], "match": "any"}
+{"qid": "q31", "memory_id": "m31", "question": "차기 제품 코드네임안은 무엇인가?", "expected_tokens": ["번개곰"], "match": "any"}
+{"qid": "q32", "memory_id": "m32", "question": "논의 중인 신규 렌탈 단가는 월 얼마인가?", "expected_tokens": ["39만원"], "match": "any"}
+{"qid": "q33", "memory_id": "m33", "question": "검토 중인 제휴사는 어디인가?", "expected_tokens": ["달빛문구"], "match": "any"}
+{"qid": "q34", "memory_id": "m34", "question": "제안된 시범 운영 매장 수는 몇 곳인가?", "expected_tokens": ["5곳"], "match": "any"}
+{"qid": "q35", "memory_id": "m35", "question": "하반기 예정 행사 날짜안으로 오른 날짜는 언제인가?", "expected_tokens": ["2026-12-19"], "match": "any"}
+{"qid": "q36", "memory_id": "m36", "question": "검토 중인 내부 문서의 번호는 무엇인가?", "expected_tokens": ["NR-2026-0847"], "match": "any"}
+{"qid": "q37", "memory_id": "m37", "question": "기각된 안건은 무엇인가?", "expected_tokens": ["사내코인"], "match": "any"}
+{"qid": "q38", "memory_id": "m38", "question": "정정된 오기 수치는 무엇인가?", "expected_tokens": ["999대"], "match": "any"}
+{"qid": "q39", "memory_id": "m39", "question": "폐기된 디자인은 무엇인가?", "expected_tokens": ["검은돛"], "match": "any"}
+{"qid": "q40", "memory_id": "m40", "question": "중단된 제휴 상대는 어디인가?", "expected_tokens": ["구름식당"], "match": "any"}

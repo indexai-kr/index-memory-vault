@@ -13,3 +13,11 @@ vault/
 .DS_Store
 CLAUDE.md
 DESIGN.md
+
+# 확장 프로그램: 빌드 산출물과 개인 경로가 든 실제 매니페스트는 올리지 않는다.
+# 배포는 GitHub Release 자산으로 하고, 저장소에는 example만 둔다.
+extension/server/*.exe
+extension/manifest.json
+
+# test fixtures (synthetic only — never real vault or knowledge data)
+!tests/fixtures/knowledge_small.db

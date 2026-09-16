@@ -98,3 +98,4 @@ interpretation of "6.7 %": gate intact, agent discipline not guaranteed.
 - Model behavior drifts with provider updates; re-run before quoting.
 - The "23.3 % → 96.7 %" numbers once mentioned verbally are not used
   anywhere — no raw logs exist for them.
+- 벤치 실행 후 opencode가 imv-server MCP 프로세스를 종료하지 않아 orphan 다수 발생 가능. 재실행 전 수동 종료 필요.

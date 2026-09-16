@@ -1,6 +1,6 @@
 [project]
 name = "index-memory-vault"
-version = "0.3.0"
+version = "0.3.1"
 description = "Self-hosted AI memory server with user-owned storage and human approval gates (MCP)"
 requires-python = ">=3.10"
 license = { text = "AGPL-3.0-only" }

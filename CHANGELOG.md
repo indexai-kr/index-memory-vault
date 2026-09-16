@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.1
+
+mcp<2 핀 — mcp 2.x가 fastmcp를 제거하며 생긴 import 회귀 수정.
+
 ## 0.3.0
 
 Experimental, all in this repo: knowledge-base search (`search_chunks`,

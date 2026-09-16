@@ -1,0 +1,50 @@
+name: Bug report
+description: Report something broken in index-memory-vault.
+title: "[bug] "
+labels: ["bug"]
+body:
+  - type: textarea
+    id: repro
+    attributes:
+      label: Reproduction steps
+      description: Exact commands or tool calls that trigger the bug.
+      placeholder: |
+        1. imv-server ...
+        2. search_memory(query="...") ...
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected
+      description: What should have happened.
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual
+      description: What happened instead (paste output or logs).
+    validations:
+      required: true
+  - type: input
+    id: os
+    attributes:
+      label: OS
+      placeholder: e.g. Windows 11 24H2
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: imv-server version
+      placeholder: e.g. 0.3.0 (`imv --version`)
+    validations:
+      required: true
+  - type: input
+    id: client
+    attributes:
+      label: MCP client
+      placeholder: e.g. Claude Code 2.1.x, Claude Desktop, Codex
+    validations:
+      required: true

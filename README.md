@@ -47,6 +47,18 @@ would defeat the entire point.
 
 Everything above is open for argument. If a design is wrong, open an issue — that is why it is published unfinished.
 
+## Measured (reproducible)
+
+Ref Impact bench, 40 synthetic memories, 3 runs per condition, model: opencode/muse-spark-1.3-contributor-free, IMV v0.3.0 (bench code at 65cdab2, logs at 8434ad9):
+
+| Condition | Recall (30 verified) | Leak (10 needs_review/blocked) | Tool calls / q |
+|---|---|---|---|
+| A no vault | 0.0 % (0.0–0.0) | 0.0 % | 0.6 |
+| B vault, default | 100.0 % (100.0–100.0) | 6.7 % | 4.3 |
+| C vault + needs_review opt-in | 100.0 % (100.0–100.0) | 0.0 % blocked (labeled) | 3.3 |
+
+`imv-bench ref-impact` reproduces this. Raw logs: bench/ref_impact/results/.
+
 ## Quick start
 
 ```bash

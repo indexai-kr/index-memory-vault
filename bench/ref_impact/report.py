@@ -79,7 +79,6 @@ def main() -> None:
     if not runs:
         raise SystemExit(f"no completed runs in {root}")
     table = render_table(runs)
-    print(table)
     latest = repo_root / "docs" / "benchmark" / "latest.md"
     latest.parent.mkdir(parents=True, exist_ok=True)
     latest.write_text(
@@ -88,7 +87,8 @@ def main() -> None:
         "`bench/ref_impact/results/`. Numbers here never diverge from "
         "those logs.\n\n" + table + "\n",
         encoding="utf-8")
-    print(f"\nwrote {latest}")
+    print(f"wrote {latest}")
+    print(table.encode("ascii", errors="replace").decode("ascii"))
 
 
 if __name__ == "__main__":

@@ -14,18 +14,20 @@ portal = [
   "tzdata",
 ]
 test = ["pytest>=8", "httpx>=0.27"]
+bench = []
 
 [project.scripts]
 imv = "imv.cli:main"
 imv-server = "imv.server:main"
 imv-portal = "imv.portal.app:main"
+imv-bench = "bench.ref_impact.cli:main"
 
 [build-system]
 requires = ["setuptools>=68"]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools.packages.find]
-include = ["imv*"]
+include = ["imv*", "bench*"]
 
 [tool.setuptools.package-data]
 "imv.portal" = ["static/*"]

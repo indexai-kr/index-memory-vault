@@ -1,0 +1,9 @@
+{
+  "n": 40,
+  "recall": 0.0,
+  "leak_rate": 0.0,
+  "blocked_leak_rate": 0.0,
+  "tool_calls_per_q": 0.575,
+  "median_latency_ms": 9234,
+  "failed": 0
+}

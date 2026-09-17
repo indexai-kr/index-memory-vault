@@ -37,7 +37,7 @@ would defeat the entire point.
 |---|---|---|
 | MCP memory server, q_state (needs_review / verified / blocked) | Stable | since v0.2.x |
 | Human-only approval via CLI (`imv approve`) | Stable | never exposed as an MCP tool |
-| Knowledge-base search (`search_chunks`, `get_chunk`, `imv_status`) | Experimental | v0.3.0; served only if approval_state=approved and search_tier in (primary, reference) |
+| Knowledge-base search (`search_chunks`, `get_chunk`, `imv_status`) | Experimental | since v0.3.0; served only if approval_state=approved and search_tier in (primary, reference) |
 | Two-axis schema (search_tier × approval_state) | Experimental | enforced server-side in knowledge.py |
 | Dreaming cycle (light / deep / rem) | Experimental | read-only; produces proposals only |
 | Waking (`imv waking apply`) | Experimental | human CLI, dry-run by default, never an MCP tool |
@@ -49,24 +49,32 @@ Everything above is open for argument. If a design is wrong, open an issue — t
 
 ## Measured (reproducible)
 
-Ref Impact bench, 40 synthetic memories, 3 runs per condition, model: opencode/muse-spark-1.3-contributor-free, IMV v0.3.0 (bench code at 65cdab2, logs at 8434ad9):
+Ref Impact bench, 40 synthetic memories, 3 runs per condition, model: opencode/muse-spark-1.3-contributor-free, IMV v0.3.0 code (bench code at 65cdab2, logs at 8434ad9; 0.3.1 changes only the mcp pin, not the measured code paths). Means over 3 runs:
 
 | Condition | Recall (30 verified) | Leak (10 needs_review/blocked) | Tool calls / q |
 |---|---|---|---|
 | A no vault | 0.0 % (0.0–0.0) | 0.0 % | 0.6 |
-| B vault, default | 100.0 % (100.0–100.0) | 6.7 % | 4.3 |
+| B vault, default | 100.0 % (100.0–100.0) | 6.7 % | 4.2 |
 | C vault + needs_review opt-in | 100.0 % (100.0–100.0) | 0.0 % blocked (labeled) | 3.3 |
 
-`imv-bench ref-impact` reproduces this. Raw logs: bench/ref_impact/results/.
+`imv-bench ref-impact` reproduces this. Per-run table: docs/benchmark/latest.md. Raw logs: bench/ref_impact/results/. Synthetic memories — not a production claim.
 
 ## Quick start
 
 ```bash
-docker compose up          # HTTP MCP endpoint on :8484, vault in ./vault
-# or, local stdio server:
-pip install .
-imv-server
+pip install index-memory-vault     # PyPI, v0.3.1 (requires mcp<2, pinned)
+export IMV_VAULT=~/vault           # Windows: $env:IMV_VAULT='C:\Users\you\vault'
+imv-server                         # local stdio MCP server
 ```
+
+Alternatives:
+
+```bash
+docker compose up          # HTTP MCP endpoint on :8484, vault in ./vault
+pip install .              # from a source checkout
+```
+
+Note: v0.3.0 is broken with mcp 2.x (fastmcp removed) and is marked pre-release. Use 0.3.1 or later.
 
 ## Official Windows build and member portal
 
@@ -90,7 +98,7 @@ Build the Windows executables and Inno Setup wrapper on Windows:
 .\scripts\build_windows.ps1
 ```
 
-Outputs: `imv-server.exe`, `imv.exe`, and `imv-setup-0.2.1.exe`. The installer
+Outputs: `imv-server.exe`, `imv.exe`, and `imv-setup-0.3.1.exe`. The installer
 backs up and JSON-merges only `mcpServers.memory-vault`; malformed Claude
 configuration is backed up before a clean config is created.
 
@@ -147,10 +155,10 @@ back it up, open it in Obsidian.
 
 ## Roadmap
 
-- v0.1 — self-hosted memory server
-- v0.2 — member portal, official release library, and Windows installer (current)
-- v0.3 — Claude Code / Codex / Ollama recipes
-- v0.4 — audit ledger export
+- v0.1 — self-hosted memory server (done)
+- v0.2 — member portal, official release library, and Windows installer (done)
+- v0.3 — knowledge-base search, dreaming / waking, pre-approval criteria v0.1, ref-impact bench, PyPI package (current, 0.3.1)
+- v0.4 — Claude Code / Codex / Ollama recipes, audit ledger export, Ref-Learning and Q-Cache from design to code
 - v0.5 — team mode
 
 ## License

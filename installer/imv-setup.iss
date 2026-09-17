@@ -1,4 +1,4 @@
-#define AppVersion "0.2.1"
+#define AppVersion "0.3.1"
 [Setup]
 AppName=INDEX Memory Vault
 AppVersion={#AppVersion}

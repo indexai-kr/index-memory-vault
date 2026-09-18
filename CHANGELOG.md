@@ -1,5 +1,13 @@
 # Changelog
 
+## Unreleased
+
+Enforce one verified-only MCP read contract across `search_memory`,
+`list_memory`, and `get_memory`. Client arguments can no longer expose
+`needs_review` content on a default server. A process-level operator escape
+hatch, `IMV_ALLOW_UNVERIFIED_READ=1`, is available for dedicated review and
+test instances. Add q36/q37 regression coverage.
+
 ## 0.3.1
 
 mcp<2 핀 — mcp 2.x가 fastmcp를 제거하며 생긴 import 회귀 수정.

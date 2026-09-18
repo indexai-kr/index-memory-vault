@@ -23,7 +23,7 @@ index-memory-vault keeps the shared pool, but adds two constraints:
 
    | q_state | meaning | served by default? |
    |---|---|---|
-   | `needs_review` | an AI saved this | no (opt-in, labeled) |
+   | `needs_review` | an AI saved this | no |
    | `verified` | a human approved it | **yes** |
    | `blocked` | a human rejected it | never |
 
@@ -135,10 +135,17 @@ way — stdio locally, or streamable HTTP against the Docker endpoint.
 
 - `save_memory(title, content, tags?, source?)` → always `needs_review`
 - `search_memory(query, limit?, include_unverified?)` → verified-only by default
-- `list_memory(q_state?, limit?)`
-- `get_memory(memory_id)`
+- `list_memory(q_state?, limit?)` → verified-only by default
+- `get_memory(memory_id)` → verified-only by default
 - `approve_memory` / `reject_memory` → **disabled by default**
   (`IMV_ALLOW_AGENT_REVIEW=1` to override — read the warning first)
+
+The verified-only contract is enforced across search, list, and get. A model
+cannot opt itself into pending content by passing `include_unverified=true` or
+`q_state=needs_review`, and knowing an unverified id does not make it readable.
+Operators may expose those paths only on a dedicated review/test server by
+setting `IMV_ALLOW_UNVERIFIED_READ=1`; `imv_status` reports whether that escape
+hatch is active. Human review through the `imv` CLI does not require it.
 
 Every state transition is written to an append-only `audit_log`.
 

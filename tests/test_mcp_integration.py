@@ -65,6 +65,33 @@ class MCPIntegrationTests(unittest.IsolatedAsyncioTestCase):
                     ))
                     self.assertEqual(hidden["results"], [])
 
+                    # q37 regression: a model cannot opt itself into the
+                    # unverified surface on a default server.
+                    self_opt_in = _tool_data(await session.call_tool(
+                        "search_memory",
+                        {"query": "SQLite", "include_unverified": True},
+                    ))
+                    self.assertEqual(self_opt_in["results"], [])
+                    self.assertEqual(self_opt_in["surface"], "verified-only")
+                    self.assertIn("operator", self_opt_in["error"])
+
+                    # q36 regression: list + get cannot route around the same
+                    # verified-only contract.
+                    pending = _tool_data(await session.call_tool(
+                        "list_memory", {"q_state": "needs_review"}
+                    ))
+                    self.assertEqual(pending["results"], [])
+                    self.assertEqual(pending["surface"], "verified-only")
+                    by_pending_id = _tool_data(await session.call_tool(
+                        "get_memory", {"memory_id": memory_id}
+                    ))
+                    self.assertIsNone(by_pending_id["result"])
+
+                    default_list = _tool_data(await session.call_tool(
+                        "list_memory", {}
+                    ))
+                    self.assertEqual(default_list["results"], [])
+
                     reviewer = VaultStore(vault)
                     try:
                         reviewer.set_state(memory_id, "verified", "human:integration-test")
@@ -99,7 +126,49 @@ class MCPIntegrationTests(unittest.IsolatedAsyncioTestCase):
                     self.assertEqual(
                         status["memory_vault"]["memories_by_q_state"]["verified"], 1)
                     self.assertFalse(status["memory_vault"]["agent_review_allowed"])
+                    self.assertFalse(status["memory_vault"]["unverified_read_allowed"])
                     self.assertFalse(status["knowledge_base"]["connected"])
+
+    async def test_operator_can_enable_a_dedicated_unverified_read_surface(self):
+        with tempfile.TemporaryDirectory() as vault:
+            seed = VaultStore(vault)
+            try:
+                pending = seed.save("Pending fact", "NR-2026-0847", source="test")
+            finally:
+                seed.close()
+
+            env = os.environ.copy()
+            env["IMV_VAULT"] = vault
+            env["IMV_ALLOW_UNVERIFIED_READ"] = "1"
+            env.pop("IMV_KNOWLEDGE_DB", None)
+            params = StdioServerParameters(
+                command=sys.executable,
+                args=["-m", "imv.server"],
+                env=env,
+                cwd=os.path.dirname(os.path.dirname(__file__)),
+            )
+
+            async with stdio_client(params) as (read, write):
+                async with ClientSession(read, write) as session:
+                    await session.initialize()
+                    searched = _tool_data(await session.call_tool(
+                        "search_memory",
+                        {"query": "NR-2026-0847", "include_unverified": True},
+                    ))
+                    self.assertEqual([m["id"] for m in searched["results"]],
+                                     [pending.id])
+                    listed = _tool_data(await session.call_tool(
+                        "list_memory", {"q_state": "needs_review"}
+                    ))
+                    self.assertEqual([m["id"] for m in listed["results"]],
+                                     [pending.id])
+                    fetched = _tool_data(await session.call_tool(
+                        "get_memory", {"memory_id": pending.id}
+                    ))
+                    self.assertEqual(fetched["result"]["id"], pending.id)
+                    status = _tool_data(await session.call_tool("imv_status", {}))
+                    self.assertTrue(
+                        status["memory_vault"]["unverified_read_allowed"])
 
 
 class HostileWorkingDirectoryTests(unittest.IsolatedAsyncioTestCase):

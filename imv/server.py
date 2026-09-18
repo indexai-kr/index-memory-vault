@@ -3,9 +3,9 @@
 Tool surface exposed to AI clients (Claude Code, Codex, Cursor, local LLMs):
 
     save_memory    -> always lands in needs_review (Q2)
-    search_memory  -> verified-only by default; unverified opt-in, labeled
-    list_memory    -> browse by q_state
-    get_memory     -> fetch one record
+    search_memory  -> verified-only by default
+    list_memory    -> verified-only by default
+    get_memory     -> verified-only by default
     approve_memory / reject_memory
                    -> DISABLED by default. Approval authority belongs to
                       the human via CLI (`imv approve <id>`). Set
@@ -27,6 +27,7 @@ from .store import VaultStore
 
 VAULT_DIR = os.environ.get("IMV_VAULT", "./vault")
 ALLOW_AGENT_REVIEW = os.environ.get("IMV_ALLOW_AGENT_REVIEW", "0") == "1"
+ALLOW_UNVERIFIED_READ = os.environ.get("IMV_ALLOW_UNVERIFIED_READ", "0") == "1"
 KNOWLEDGE_DB = os.environ.get("IMV_KNOWLEDGE_DB", "")
 
 # FastMCP's settings are pydantic-settings, which by default reads a `.env`
@@ -61,6 +62,12 @@ REVIEW_LOCKED_MSG = (
     "(Server admins can override with IMV_ALLOW_AGENT_REVIEW=1.)"
 )
 
+UNVERIFIED_READ_LOCKED_MSG = (
+    "Unverified memory is hidden from the MCP surface. "
+    "A server operator may start a dedicated review/test instance with "
+    "IMV_ALLOW_UNVERIFIED_READ=1."
+)
+
 
 @mcp.tool()
 def save_memory(title: str, content: str, tags: list[str] | None = None,
@@ -77,8 +84,12 @@ def save_memory(title: str, content: str, tags: list[str] | None = None,
 def search_memory(query: str, limit: int = 10,
                   include_unverified: bool = False) -> dict:
     """Full-text search. By default only human-verified memories are
-    returned. Set include_unverified=true to also see needs_review items,
-    which are labeled and must be treated as unconfirmed."""
+    returned. include_unverified is accepted only on a server instance whose
+    operator explicitly enabled IMV_ALLOW_UNVERIFIED_READ=1."""
+    if include_unverified and not ALLOW_UNVERIFIED_READ:
+        return {"results": [], "surface": "verified-only",
+                "retrieval_path": "none",
+                "error": UNVERIFIED_READ_LOCKED_MSG}
     hits, retrieval_path = store.search_with_path(
         query, limit=limit, include_unverified=include_unverified)
     return {"results": [m.public() for m in hits],
@@ -89,15 +100,25 @@ def search_memory(query: str, limit: int = 10,
 
 @mcp.tool()
 def list_memory(q_state: str | None = None, limit: int = 50) -> dict:
-    """List memories, optionally filtered by q_state
-    (needs_review | verified | blocked)."""
-    return {"results": [m.public() for m in store.list(q_state, limit)]}
+    """List verified memories. Non-verified q_state filters are accepted only
+    on an operator-enabled review/test instance."""
+    if q_state not in (None, "verified") and not ALLOW_UNVERIFIED_READ:
+        return {"results": [], "surface": "verified-only",
+                "error": UNVERIFIED_READ_LOCKED_MSG}
+    effective_state = q_state if ALLOW_UNVERIFIED_READ else "verified"
+    return {"results": [m.public() for m in store.list(effective_state, limit)],
+            "surface": "operator-unverified" if ALLOW_UNVERIFIED_READ
+                       else "verified-only"}
 
 
 @mcp.tool()
 def get_memory(memory_id: str) -> dict:
-    """Fetch a single memory by id."""
+    """Fetch a verified memory by id. Knowing an unverified id does not grant
+    access unless the server operator enabled the review/test surface."""
     mem = store.get(memory_id)
+    if mem is not None and mem.q_state != "verified" and not ALLOW_UNVERIFIED_READ:
+        return {"result": None, "surface": "verified-only",
+                "note": "No verified memory with that id is retrievable."}
     return {"result": mem.public() if mem else None}
 
 
@@ -173,6 +194,7 @@ def imv_status() -> dict:
             "db_path": str(store.db_path),
             "memories_by_q_state": by_state,
             "agent_review_allowed": ALLOW_AGENT_REVIEW,
+            "unverified_read_allowed": ALLOW_UNVERIFIED_READ,
         }
     }
     try:
